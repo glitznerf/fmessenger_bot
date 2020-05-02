@@ -36,7 +36,9 @@ class MessengerBot():
         print("Successfully logged into messenger!")
 
     # Text in the latest open conversation
-    def text_latest(self, msg):
+    def text_latest(self, msg, print_=True):
+        if print_:
+            print(f"Texting '{msg}' into the latest conversation.")
         # Navigate message line on absolute path due to random class name initialization
         msg_line = self.driver.find_element_by_xpath('/html/body/div/div/div/div[2]/span/div[2]/div[2]/div[2]/div[2]/div[3]/div/div/div[1]/div/div/div/div')
         sleep(0.1)
@@ -44,14 +46,32 @@ class MessengerBot():
         # Insert each letter individually and randomize speed to stay undetected
         for letter in msg:
             msg_line.send_keys(letter)
-            sleep(random.randrange(1,5)/10)
+            sleep(random.randrange(1,3)/10)
 
         # Send message with random delay
-        sleep(random.randrange(2,10)/10)
+        sleep(random.randrange(2,7)/10)
         send_button = self.driver.find_element_by_xpath('/html/body/div/div/div/div[2]/span/div[2]/div[2]/div[2]/div[2]/a')
         send_button.click()
 
+    # Text the lion king script line by line
+    def lion_king(self, dest, no_lines):                # Destination: function that sends argument to conversation, no_lines: integer of the first n lines to be sent
+        # Open the script txt
+        print(f"Texting {dest.__name__} {no_lines} lines of the lion king script.")
+        with open("lion_king.txt","r") as lines:
+            n = 0
+            for line in lines:
+                line = line.strip()
+                if (line != "") and (line[0] != "/"):   # Skip empty and commented lines
+                    dest(line.strip(),print_=False)
+                    sleep(random.randrange(7,11)/10)
+                if n > no_lines:
+                    break                               # Break out of loop after no_lines lines
+                n += 1
+        print("Lion king was delivered!")
 
-# Load up bot object and log into Messenger
+# Load up bot object and log in to Messenger
 bot = MessengerBot()
 bot.login()
+
+# Text 113 lines of lion king into the latest conversation
+bot.lion_king(bot.text_latest,113)
