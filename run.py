@@ -1,4 +1,5 @@
-from selenium import webdriver                              # Use selenium to navigate web
+import selenium
+from selenium import webdriver                              # Use selenium driver to navigate web
 from webdriver_manager.chrome import ChromeDriverManager    # Keep driver accessible
 from time import sleep                                      # Waiting for website loading
 import random                                               # To randomize activity
@@ -35,8 +36,17 @@ class MessengerBot():
         login_button.click()
         print("Successfully logged into messenger!")
 
-    # Text in the latest open conversation
-    def text_latest(self, msg, print_=True):
+    # Select a conversation
+    def select_conversation(self, name):
+        try:
+            # Find conversation by contact name
+            self.driver.find_element_by_partial_link_text(name).click()
+            print(f"Conversation {name} selected")
+        except selenium.common.exceptions.NoSuchElementException:
+            print("Cannot find conversation!")
+
+    # Text in the current open conversation
+    def text_current(self, msg, print_=True):
         if print_:
             print(f"Texting '{msg}' into the latest conversation.")
         # Navigate message line on absolute path due to random class name initialization
@@ -54,15 +64,19 @@ class MessengerBot():
         send_button.click()
 
     # Text the lion king script line by line
-    def lion_king(self, dest, no_lines):                # Destination: function that sends argument to conversation, no_lines: integer of the first n lines to be sent
-        # Open the script txt
-        print(f"Texting {dest.__name__} {no_lines} lines of the lion king script.")
+    def lion_king(self, no_lines, dest="current"):
+        # arguments: no_lines: integer of the first n lines to be sent, destination: name of destination contact,
+        # select wanted conversation
+        if dest != "current":
+            self.select_conversation(dest)
+        print(f"Texting {dest} {no_lines} lines of the lion king script.")
+            # Open the script txt
         with open("lion_king.txt","r") as lines:
             n = 0
             for line in lines:
                 line = line.strip()
                 if (line != "") and (line[0] != "/"):   # Skip empty and commented lines
-                    dest(line.strip(),print_=False)
+                    self.text_current(line.strip(),print_=False)
                     sleep(random.randrange(7,11)/10)
                 if n > no_lines:
                     break                               # Break out of loop after no_lines lines
@@ -72,6 +86,3 @@ class MessengerBot():
 # Load up bot object and log in to Messenger
 bot = MessengerBot()
 bot.login()
-
-# Text 113 lines of lion king into the latest conversation
-bot.lion_king(bot.text_latest,113)
