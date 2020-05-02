@@ -12,7 +12,7 @@ An unintelligent messenger bot for Facebook Messenger implemented in Python.
 - webdriver_manager
 
 ## Installation and Example Usage
-'''
+```
 pip install selenium
 pip install webdriver_manager
 // Set up a 'keys.py' with 'username, password = *username*, *password*' and an empty '__init__.py' file in the parent folder
@@ -26,4 +26,4 @@ bot.select_conversation("David")
 bot.text_latest(message)
 // Example: Text 113 lines of lion king script to David
 bot.lion_king(113, "David")
-'''
+```
